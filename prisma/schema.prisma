@@ -8,6 +8,18 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+    ADMIN
+    CLIENT
+}
+
+enum FriendStatus {
+    PENDING
+    ACCEPTED
+    BLOCKED
+}
+
+
 
 
 // Necessary for Next auth
@@ -46,7 +58,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
-    posts         Post[]
+
 }
 
 model VerificationToken {
