@@ -8,6 +8,7 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+// Basic enums
 enum UserRole {
     ADMIN
     CLIENT
@@ -17,6 +18,28 @@ enum FriendStatus {
     PENDING
     ACCEPTED
     BLOCKED
+}
+
+
+// Databases tables for clients
+model Schedule {
+    id            String   @id @default(cuid()) // primary key 
+    userId        String // foreign key refernces User table
+    classCode     String
+    building      String
+    startDateTime DateTime
+    endDateTime   DateTime
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+
+    // Defines the relationship between Schedule and User
+    // Relation "user" points to "User" model
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    // For queries like "find all schedules for a user" much faster
+    @@index([userId])
+    // For queries invloving time
+    @@index([startDateTime])
 }
 
 
@@ -52,12 +75,20 @@ model Session {
 
 model User {
     id            String    @id @default(cuid())
-    name          String?
+    firstName     String?
+    lastName      String?
     email         String?   @unique
     emailVerified DateTime?
     image         String?
+
+    role          UserRole @default(CLIENT)
+
     accounts      Account[]
     sessions      Session[]
+
+    schedules     Schedule[]
+    
+
 
 }
 
