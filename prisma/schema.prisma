@@ -14,7 +14,7 @@ enum UserRole {
     CLIENT
 }
 
-enum FriendShipStatus {
+enum FriendshipStatus {
     PENDING
     ACCEPTED
     BLOCKED
@@ -28,10 +28,10 @@ enum AvailabilityStatus {
 // User to many Schedule
 model Schedule {
     id            String   @id @default(cuid()) // primary key 
-    userId        String // foreign key refernces User table
-    classCode     String
-    className     String?
-    building      String
+    userId        String  // foreign key refernces User table
+    classCode     String? // (e.g. COP3530,    null)
+    locationName  String? // (e.g. class room, Marston Library)  
+    buildingCode  String? // (e.g  CSE,        LIB)
     startDateTime DateTime
     endDateTime   DateTime
     createdAt     DateTime @default(now())
