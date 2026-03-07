@@ -14,18 +14,18 @@ enum UserRole {
     CLIENT
 }
 
-enum FriendStatus {
+enum FriendShipStatus {
     PENDING
     ACCEPTED
     BLOCKED
 }
 
-
-// Databases tables for clients
+// User to many Schedule
 model Schedule {
     id            String   @id @default(cuid()) // primary key 
     userId        String // foreign key refernces User table
     classCode     String
+    className     String?
     building      String
     startDateTime DateTime
     endDateTime   DateTime
@@ -38,12 +38,44 @@ model Schedule {
 
     // For queries like "find all schedules for a user" much faster
     @@index([userId])
-    // For queries invloving time
+    // For queries invloving the time
     @@index([startDateTime])
 }
 
+// User to User relation
+model Friendship {
+    id          String           @id @default(cuid())
+    requesterId String
+    addresseeId String
+    status      FriendshipStatus @default(PENDING)
+    createdAt   DateTime         @default(now())
+    updatedAt   DateTime         @updatedAt
 
+    requester User @relation("FriendRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+    addressee User @relation("FriendAddressee", fields: [addresseeId], references: [id], onDelete: Cascade)
 
+    @@unique([requesterId, addresseeId])
+}
+
+// User Model!
+model User {
+    id            String    @id @default(cuid())
+    firstName     String?
+    lastName      String?
+    email         String?   @unique
+    emailVerified DateTime?
+    image         String?
+
+    role          UserRole @default(CLIENT)
+
+    accounts      Account[]
+    sessions      Session[]
+
+    schedules     Schedule[]
+
+    sentFriendRequests     Friendship[] @relation("FriendRequester")
+    receivedFriendRequests Friendship[] @relation("FriendAddressee")
+}
 
 // Necessary for Next auth
 model Account {
@@ -73,25 +105,6 @@ model Session {
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model User {
-    id            String    @id @default(cuid())
-    firstName     String?
-    lastName      String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-
-    role          UserRole @default(CLIENT)
-
-    accounts      Account[]
-    sessions      Session[]
-
-    schedules     Schedule[]
-    
-
-
-}
-
 model VerificationToken {
     identifier String
     token      String   @unique
@@ -99,3 +112,5 @@ model VerificationToken {
 
     @@unique([identifier, token])
 }
+
+
