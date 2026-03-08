@@ -1,69 +1,106 @@
 import Link from "next/link";
 
-import { LatestPost } from "~/app/_components/post";
 import { auth } from "~/server/auth";
-import { api, HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
   const session = await auth();
 
-  if (session?.user) {
-    void api.post.getLatest.prefetch();
-  }
-
   return (
-    <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-          </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+    <main className="flex min-h-screen flex-col">
+      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 text-white">
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-20 left-10 h-32 w-32 rounded-full bg-white blur-3xl"></div>
+          <div className="absolute bottom-20 right-10 h-48 w-48 rounded-full bg-pink-300 blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 h-40 w-40 rounded-full bg-purple-300 blur-3xl"></div>
+        </div>
+
+        <nav className="relative z-10 flex items-center justify-between px-8 py-6">
+          <h1 className="text-2xl font-bold tracking-tight">Spontaneity</h1>
+          <div className="flex gap-4">
+            {session ? (
+              <Link
+                href="/dashboard"
+                className="rounded-full bg-white px-6 py-2 font-semibold text-purple-900 transition hover:bg-white/90"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="rounded-full bg-white/10 px-6 py-2 font-semibold transition hover:bg-white/20"
+                >
+                  Log in
+                </Link>
+                <Link
+                  href="/login"
+                  className="rounded-full bg-white px-6 py-2 font-semibold text-purple-900 transition hover:bg-white/90"
+                >
+                  Get Started
+                </Link>
+              </>
+            )}
+          </div>
+        </nav>
+
+        <div className="relative z-10 mx-auto max-w-5xl px-8 py-24 text-center">
+          <h2 className="text-5xl font-extrabold tracking-tight sm:text-7xl">
+            Meet up <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-cyan-300">spontaneously</span>
+          </h2>
+          <p className="mx-auto mt-6 max-w-2xl text-xl text-white/80">
+            Connect with friends on campus in the moment. We check your Google Calendar, 
+            find mutual free time, and suggest the perfect spot to meet.
+          </p>
+          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
+              href="/login"
+              className="rounded-full bg-white px-8 py-4 text-lg font-semibold text-purple-900 transition hover:bg-white/90 hover:scale-105"
             >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
+              Start Meeting People
             </Link>
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello ? hello.greeting : "Loading tRPC query..."}
-            </p>
+        </div>
+      </div>
 
-            <div className="flex flex-col items-center justify-center gap-4">
-              <p className="text-center text-2xl text-white">
-                {session && <span>Logged in as {session.user?.name}</span>}
-              </p>
-              <Link
-                href={session ? "/api/auth/signout" : "/api/auth/signin"}
-                className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-              >
-                {session ? "Sign out" : "Sign in"}
-              </Link>
+      <section className="bg-gray-50 px-8 py-20">
+        <div className="mx-auto max-w-5xl">
+          <h3 className="mb-12 text-center text-3xl font-bold text-gray-900">How it works</h3>
+          <div className="grid gap-8 md:grid-cols-3">
+            <div className="rounded-2xl bg-white p-6 shadow-lg">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-purple-100 text-2xl">📅</div>
+              <h4 className="mb-2 text-xl font-semibold text-gray-900">Sync Your Calendar</h4>
+              <p className="text-gray-600">Connect your Google Calendar and we&apos;ll automatically find your free windows.</p>
+            </div>
+            <div className="rounded-2xl bg-white p-6 shadow-lg">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-pink-100 text-2xl">👥</div>
+              <h4 className="mb-2 text-xl font-semibold text-gray-900">Add Friends</h4>
+              <p className="text-gray-600">Connect with friends on campus and see when you&apos;re both free to hang out.</p>
+            </div>
+            <div className="rounded-2xl bg-white p-6 shadow-lg">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-100 text-2xl">📍</div>
+              <h4 className="mb-2 text-xl font-semibold text-gray-900">Find a Spot</h4>
+              <p className="text-gray-600">We suggest the perfect middle spot on campus based on your locations.</p>
             </div>
           </div>
-
-          {session?.user && <LatestPost />}
         </div>
-      </main>
-    </HydrateClient>
+      </section>
+
+      <section className="bg-gradient-to-r from-purple-900 to-indigo-900 px-8 py-16 text-center text-white">
+        <h3 className="text-3xl font-bold">Ready to meet up?</h3>
+        <p className="mx-auto mt-4 max-w-lg text-white/80">
+          Stop planning ahead. Let spontaneity bring you together with friends.
+        </p>
+        <Link
+          href="/login"
+          className="mt-6 inline-block rounded-full bg-white px-8 py-3 font-semibold text-purple-900 transition hover:bg-white/90"
+        >
+          Get Started Free
+        </Link>
+      </section>
+
+      <footer className="bg-gray-900 px-8 py-8 text-center text-gray-400">
+        <p>&copy; 2026 Spontaneity. Made by students at the University of Florida.</p>
+      </footer>
+    </main>
   );
 }
