@@ -1,22 +1,25 @@
 import {db} from "~/server/db"
+import { AvailabilityStatus } from "../../../generated/prisma";
 
 // function to create new schedule entry for user
 export async function createSchedule(
     userId: string, 
+    buildingCode: string,
     startDateTime: Date,
     endDateTime: Date,
-    buildingCode: string,
+    status: AvailabilityStatus, // Available or Unavailable
     classCode?: string,
     locationName?: string
 ) {
     return db.schedule.create({
         data: {
             userId,
+            buildingCode,
             startDateTime,
             endDateTime,
+            status,
             classCode,
             locationName,
-            buildingCode,
         },
     });
 }
