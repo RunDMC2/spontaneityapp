@@ -20,3 +20,11 @@ export async function createSchedule(
         },
     });
 }
+
+// function to get full schedule of specific user
+export async function getScheduleForUser(userId: string) {
+    return db.schedule.findMany({
+        where: {userId},
+        orderBy: {startDateTime: "asc"}, // sorts schedules cronologically
+    });
+}
