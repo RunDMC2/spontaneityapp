@@ -31,3 +31,23 @@ export async function getScheduleForUser(userId: string) {
         orderBy: {startDateTime: "asc"}, // sorts schedules cronologically
     });
 }
+
+// function to retrive availability based on specific time
+// !!!FOR CAMPUS GRAPH ALGORITHM!!!
+export async function userAvailabilityAtTime(userId: string, time: Date) {
+    const scheduleEntry = await db.schedule.findFirst({
+        where: {
+            userId,
+            startDateTime: {lte: time},
+            endDateTime: {gt:time}
+        },
+        select: {status: true}
+    });
+
+    // if user has no schedule at that time -> they are neither availbale/unavailable -> return false
+    if (!scheduleEntry) {
+        return false;
+    }
+
+    return scheduleEntry.status === AvailabilityStatus.AVAILABLE; // if availble returns true 
+}
