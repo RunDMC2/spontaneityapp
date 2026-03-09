@@ -32,7 +32,8 @@ model Schedule {
     classCode     String? // (e.g. COP3530,    null)
     locationName  String? // (e.g. class room, Marston Library)  
     buildingCode  String // (e.g  CSE,        LIB)
-    startDateTime DateTime
+    status        AvailabilityStatus() 
+    startDateTime DateTime                          
     endDateTime   DateTime
     createdAt     DateTime @default(now())
     updatedAt     DateTime @updatedAt
@@ -72,7 +73,11 @@ model User {
     image         String?
 
     role          UserRole @default(CLIENT)
-    availability  AvailabilityStatus @default(AVAILABLE)
+    
+    // maybe add feature in sprint 2
+    // for now avialbility determined in schedule
+    // maybe have default building location if user says they are available?
+    // availability  AvailabilityStatus @default(AVAILABLE)
 
     accounts      Account[]
     sessions      Session[]
